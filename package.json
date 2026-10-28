@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "npm run build": "npm run build",
-    "npm run dev": "npm run dev"
+    "db:types": "npx supabase gen types typescript --linked > src/types/database.types.ts"
+
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
