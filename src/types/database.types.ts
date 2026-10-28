@@ -45,7 +45,6 @@ export type Database = {
           changed_by: string | null
           internal_notes: string | null
           member_message: string | null
-          member_notes: string | null
           new_status_id: number
           old_status_id: number
           reference_code: string
@@ -56,7 +55,6 @@ export type Database = {
           changed_by?: string | null
           internal_notes?: string | null
           member_message?: string | null
-          member_notes?: string | null
           new_status_id?: number
           old_status_id?: number
           reference_code: string
@@ -67,7 +65,6 @@ export type Database = {
           changed_by?: string | null
           internal_notes?: string | null
           member_message?: string | null
-          member_notes?: string | null
           new_status_id?: number
           old_status_id?: number
           reference_code?: string
@@ -100,6 +97,7 @@ export type Database = {
       care_requests: {
         Row: {
           anonymous_flag: boolean
+          archived_at: string | null
           archived_flag: boolean
           contact_method_id: number
           created_at: string
@@ -108,7 +106,7 @@ export type Database = {
           id: number
           internal_notes: string | null
           last: string | null
-          member_notes: string | null
+          member_notes: string
           no_contact_flag: boolean
           phone: string | null
           reference_code: string
@@ -119,6 +117,7 @@ export type Database = {
         }
         Insert: {
           anonymous_flag?: boolean
+          archived_at?: string | null
           archived_flag?: boolean
           contact_method_id: number
           created_at?: string
@@ -127,7 +126,7 @@ export type Database = {
           id?: number
           internal_notes?: string | null
           last?: string | null
-          member_notes?: string | null
+          member_notes: string
           no_contact_flag?: boolean
           phone?: string | null
           reference_code?: string
@@ -138,6 +137,7 @@ export type Database = {
         }
         Update: {
           anonymous_flag?: boolean
+          archived_at?: string | null
           archived_flag?: boolean
           contact_method_id?: number
           created_at?: string
@@ -146,7 +146,7 @@ export type Database = {
           id?: number
           internal_notes?: string | null
           last?: string | null
-          member_notes?: string | null
+          member_notes?: string
           no_contact_flag?: boolean
           phone?: string | null
           reference_code?: string
@@ -269,25 +269,12 @@ export type Database = {
       get_care_request: {
         Args: { p_reference_code: string }
         Returns: {
-          anonymous_flag: boolean
-          archived_flag: boolean
-          contact_method: string
-          contact_method_id: number
           created_at: string
-          email: string
-          first: string
-          last: string
-          member_notes: string
-          no_contact_flag: boolean
-          phone: string
           reference_code: string
           request_type: string
-          request_type_id: number
           status_type: string
           status_type_id: number
           updated_at: string
-          urgency: string
-          urgency_type_id: number
         }[]
       }
       get_request_updates: {
@@ -295,7 +282,6 @@ export type Database = {
         Returns: {
           activity_log_id: number
           member_message: string
-          member_notes: string
           new_status: string
           new_status_id: number
           old_status: string
