@@ -249,14 +249,17 @@ export type Database = {
       urgency_type: {
         Row: {
           urgency: string
+          urgency_rank: number
           urgency_type_id: number
         }
         Insert: {
           urgency: string
+          urgency_rank: number
           urgency_type_id?: number
         }
         Update: {
           urgency?: string
+          urgency_rank?: number
           urgency_type_id?: number
         }
         Relationships: []
