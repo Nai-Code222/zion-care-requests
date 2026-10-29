@@ -1,0 +1,31 @@
+/* src/styles/base.css */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0 0 var(--space-4); }
+h1 { font-size: var(--text-xl); }
+h2 { font-size: var(--text-lg); }
+p  { margin: 0 0 var(--space-4); }
+a  { color: var(--color-primary); }
+code { font-family: var(--font-mono); }
+
+/* Form controls don't inherit fonts by default */
+input, select, textarea, button { font: inherit; color: inherit; }
+
+/* Visible keyboard focus everywhere; never remove this */
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

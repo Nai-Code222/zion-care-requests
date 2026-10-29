@@ -1,0 +1,18 @@
+/* src/styles/layout.css */
+header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+header nav,
+main {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+header nav { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+main { padding-block: var(--space-6); }
+
+/* Staff dashboard tables need more room */
+.layout--wide main { max-width: 72rem; }

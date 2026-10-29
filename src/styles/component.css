@@ -1,0 +1,60 @@
+/* src/styles/components.css */
+
+/* Form fields: <div className="field"><label/><input/><p className="field-error"/></div> */
+.field { display: grid; gap: var(--space-1); margin-bottom: var(--space-4); }
+.field label { font-weight: 600; }
+.field input, .field select, .field textarea {
+  min-height: 44px;                 /* touch target */
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+.field-hint  { color: var(--color-text-muted); font-size: var(--text-sm); }
+.field-error { color: var(--color-danger); font-size: var(--text-sm); }
+[aria-invalid='true'] { border-color: var(--color-danger); }
+
+/* Buttons: works on <button> and <Link> */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { background: var(--color-primary-hover); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn--secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
+/* Urgency badges: always show the word, so color is never the only signal */
+.badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.badge--urgent  { background: var(--urgent-bg);  color: var(--urgent-text); }
+.badge--soon    { background: var(--soon-bg);    color: var(--soon-text); }
+.badge--routine { background: var(--routine-bg); color: var(--routine-text); }
+
+/* Reference codes */
+.ref-code { font-family: var(--font-mono); letter-spacing: 0.05em; }
+
+/* Staff tables */
+table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
+th, td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+th { font-size: var(--text-sm); color: var(--color-text-muted); }

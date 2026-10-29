@@ -1,0 +1,38 @@
+/* src/styles/tokens.css */
+:root {
+  /* Color */
+  --color-bg: #f7f7f5;
+  --color-surface: #ffffff;
+  --color-text: #1c1c1e;
+  --color-text-muted: #5b5b61;
+  --color-border: #d9d9de;
+  --color-primary: #2f5d8a;
+  --color-primary-hover: #244a6f;
+  --color-on-primary: #ffffff;
+  --color-danger: #b42318;
+  --color-focus: #1a73e8;
+
+  /* Urgency: background + text pairs, each passes WCAG AA contrast */
+  --urgent-bg: #fde8e8;  --urgent-text: #9b1c1c;
+  --soon-bg: #fef3c7;    --soon-text: #92400e;
+  --routine-bg: #e6f4ea; --routine-text: #1e6b3a;
+
+  /* Type */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+
+  /* Spacing (4px scale) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius: 6px;
+  --content-width: 48rem;
+}
