@@ -189,13 +189,15 @@ Current values. The app may rely on these IDs, so **don't renumber or delete the
 | 4 | Prayer Support |
 | 5 | Other |
 
-**`urgency_type`**
+**`urgency_type`**: sorted by `urgency_rank`, not by ID
 
-| ID | Urgency |
-| --- | --- |
-| 1 | Routine |
-| 2 | Soon |
-| 3 | Urgent |
+| ID | Urgency | Rank |
+| --- | --- | --- |
+| 1 | Routine | 1 |
+| 2 | Soon | 2 |
+| 3 | Urgent | 3 |
+
+`urgency_rank` sets the sort order: a higher number means more urgent. It must be unique and above 0. To add a new level, give it a rank that fits between the existing ones (renumber the other ranks if needed). Its ID doesn't affect the order.
 
 **`contact_method_types`**
 
@@ -394,15 +396,15 @@ const { data, error } = await supabase
   .select(`
     reference_code, first, last, created_at, member_notes, internal_notes,
     request_type ( request_type ),
-    urgency_type ( urgency ),
+    urgency_type ( urgency, urgency_rank ),
     status_types ( status_type )
   `)
   .eq('archived_flag', false)
-  .order('urgency_type_id', { ascending: false }) // 3 Urgent, 2 Soon, 1 Routine
+  .order('urgency_type(urgency_rank)', { ascending: false }) // Urgent, Soon, Routine
   .order('created_at', { ascending: false })
 ```
 
-Urgency sorts by its ID, not its label, so Urgent comes first instead of being sorted alphabetically. For the Archived view, use `.eq('archived_flag', true).order('archived_at', { ascending: false })`.
+Urgency sorts by `urgency_rank`, not by its label or its ID. Sorting by label would be alphabetical, and IDs are only auto-numbers. `urgency_type(urgency_rank)` sorts the requests themselves by a column of the linked table, so `urgency_type` must be in the `select`. For the Archived view, use `.eq('archived_flag', true).order('archived_at', { ascending: false })`.
 
 **Staff: change a status with a message to the member (Way B):**
 
