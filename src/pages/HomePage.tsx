@@ -35,9 +35,9 @@ export default function HomePage() {
   return (
     <div className="home">
       <section className="hero" aria-labelledby="hero-title">
-        <div className="hero__intro">
+        <div className="stack hero__intro">
           <h1 id="hero-title" className="hero__title">Zion Care Request</h1>
-          <p className="hero__subtitle">
+          <p className="lead hero__subtitle">
             Ask our care team for prayer, a visit, or support. Your request always remain private, and you never have to give your name.
           </p>
           <div className="button-row">
@@ -50,9 +50,9 @@ export default function HomePage() {
 
       <Section title="How it works">
         {/* role="list" keeps list semantics in Safari/VoiceOver once list-style is removed */}
-        <ol className="steps" role="list">
+        <ol className="auto-grid list-reset steps" role="list">
           {steps.map((step, i) => (
-            <li key={step.title} className="card step">
+            <li key={step.title} className="card stack step">
               <NumberBadge value={i + 1} />
               <h3 className="step__title">{step.title}</h3>
               <p className="muted">{step.body}</p>
@@ -62,7 +62,7 @@ export default function HomePage() {
       </Section>
 
       <Section title="We can help with">
-        <ul className="topics" role="list">
+        <ul className="auto-grid list-reset topics" role="list">
           {helpTopics.map((topic) => (
             <li key={topic.label} className="card topic">
               <IconBadge name={topic.icon} />
