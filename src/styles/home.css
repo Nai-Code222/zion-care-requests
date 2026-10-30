@@ -1,0 +1,80 @@
+/* src/styles/home.css */
+
+/* Page: stack the sections with generous space between them */
+.home {
+  display: grid;
+  gap: clamp(var(--space-14), 8vw, var(--space-24)); /* 56px phone → 96px desktop */
+}
+
+/* ---------- Hero ---------- */
+
+.hero__intro {
+  display: grid;
+  gap: var(--space-5);
+}
+.hero__intro > * {
+  margin: 0; /* the grid gap handles spacing */
+}
+.hero__title {
+  font-size: var(--text-display);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  text-align: center;
+}
+
+.hero__subtitle {
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-text-muted);
+  max-width: 35rem;
+  margin-inline: auto;
+}
+
+/* ---------- Card grids: "How it works" and "We can help with" ---------- */
+
+/*
+ * Fits as many 15rem-wide columns as the row has room for, then wraps.
+ * min(..., 100%) stops a card from overflowing on very narrow screens.
+ */
+.steps,
+.topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps  { gap: var(--space-4); }
+.topics { gap: var(--space-3); }
+
+/* A step card: number badge, title, description stacked */
+.step {
+  display: grid;
+  align-content: start;
+  gap: 0.625rem;
+  padding: 1.625rem;
+}
+.step > * {
+  margin: 0;
+}
+.step__title {
+  font-size: var(--text-lg);
+}
+.step p {
+  line-height: 1.5625;
+}
+
+/* A topic card: icon badge beside a label */
+.topic {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: 18px;
+}
+.topic__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+}
