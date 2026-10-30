@@ -1,19 +1,19 @@
-/* src/styles/home.css */
+/* src/styles/home.css
+ *
+ * Home page only. Shared pieces (.stack, .auto-grid, .card, .lead, ...)
+ * live in layout.css and components.css.
+ */
 
-/* Page: stack the sections with generous space between them */
+/* Space between the page's sections */
 .home {
   display: grid;
-  gap: clamp(var(--space-14), 8vw, var(--space-24)); /* 56px phone → 96px desktop */
+  gap: clamp(var(--space-14), 8vw, var(--space-24));   /* 56px phone → 96px desktop */
 }
 
 /* ---------- Hero ---------- */
 
 .hero__intro {
-  display: grid;
-  gap: var(--space-5);
-}
-.hero__intro > * {
-  margin: 0; /* the grid gap handles spacing */
+  --stack-gap: var(--space-5);
 }
 .hero__title {
   font-size: var(--text-display);
@@ -21,51 +21,26 @@
   letter-spacing: -1px;
   text-align: center;
 }
-
 .hero__subtitle {
-  font-size: var(--text-lg);
-  line-height: 1.5;
-  text-align: center;
-  color: var(--color-text-muted);
-  max-width: 35rem;
   margin-inline: auto;
+  text-align: center;
 }
 
-/* ---------- Card grids: "How it works" and "We can help with" ---------- */
+/* ---------- "How it works" and "We can help with" ---------- */
 
-/*
- * Fits as many 15rem-wide columns as the row has room for, then wraps.
- * min(..., 100%) stops a card from overflowing on very narrow screens.
- */
-.steps,
-.topics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
 .steps  { gap: var(--space-4); }
 .topics { gap: var(--space-3); }
 
-/* A step card: number badge, title, description stacked */
+/* Step card: number badge, title, description */
 .step {
-  display: grid;
-  align-content: start;
-  gap: 0.625rem;
+  --stack-gap: 0.625rem;
   padding: 1.625rem;
-}
-.step > * {
-  margin: 0;
-}
-.step__title {
-  font-size: var(--text-lg);
 }
 .step p {
   line-height: 1.5625;
 }
 
-/* A topic card: icon badge beside a label */
+/* Topic card: icon badge beside a label */
 .topic {
   display: flex;
   align-items: center;
