@@ -18,11 +18,6 @@ const reassurances: { icon: IconName; title: string; body: string }[] = [
   { icon: 'card', title: 'No account needed.', body: "You'll get a code to check on your request." },
 ]
 
-const privacyChoices: Choice<'named' | 'anonymous'>[] = [
-  { value: 'named', label: 'Share my name', description: 'The care team can reach out to you.' },
-  { value: 'anonymous', label: 'Stay anonymous', description: 'No name needed. Use a code to check in.' },
-]
-
 type ContactMethod = 'Phone' | 'Email' | 'Text' | 'No Contact'
 
 const contactChoices: Choice<ContactMethod>[] = [
@@ -49,7 +44,7 @@ const requestTypes: Choice<string>[] = [
 
 export default function SubmitRequestPage() {
   const navigate = useNavigate()
-  const [privacy, setPrivacy] = useState<'named' | 'anonymous'>('named')
+  const [anonymous, setAnonymous] = useState(false) // care_requests.anonymous_flag
   const [contactMethod, setContactMethod] = useState<ContactMethod | null>(null)
   const [urgency, setUrgency] = useState<string | null>(null)
   const [requestType, setRequestType] = useState<string | null>(null)
@@ -82,55 +77,63 @@ export default function SubmitRequestPage() {
       </section>
 
       <form className="card card--lg request-form" onSubmit={handleSubmit} aria-labelledby="request-title" noValidate>
-        <ChoiceGroup
-          legend="Should we know who you are?"
-          name="privacy"
-          options={privacyChoices}
-          value={privacy}
-          onChange={setPrivacy}
-        >
-          {privacy === 'named' ? (
-            <div className="named-fields">
-              <div className="auto-grid field-row">
-                <Field label="First name">
-                  {(control) => <input {...control} name="first" autoComplete="given-name" maxLength={NAME_MAX} />}
-                </Field>
-                <Field label="Last name" optional>
-                  {(control) => <input {...control} name="last" autoComplete="family-name" maxLength={NAME_MAX} />}
+        <div>
+          <label className="choice-tile">
+            <input
+              type="checkbox"
+              name="anonymous"
+              checked={anonymous}
+              onChange={(e) => setAnonymous(e.target.checked)}
+            />
+            <span className="choice-tile__text">
+              <span className="choice-tile__label">Stay anonymous</span>
+              <span className="choice-tile__description">No name needed. Use a code to check in.</span>
+            </span>
+          </label>
+
+          {/* Hidden, not removed, so anything typed is still there if they uncheck */}
+          <div className="named-fields" hidden={anonymous}>
+            <div className="auto-grid field-row">
+              <Field label="First name">
+                {(control) => <input {...control} name="first" autoComplete="given-name" maxLength={NAME_MAX} />}
+              </Field>
+              <Field label="Last name" optional>
+                {(control) => <input {...control} name="last" autoComplete="family-name" maxLength={NAME_MAX} />}
+              </Field>
+            </div>
+
+            <ChoiceGroup
+              legend="How should we reach you?"
+              name="contactMethod"
+              options={contactChoices}
+              value={contactMethod}
+              onChange={setContactMethod}
+              variant="pill"
+            />
+
+            {(contactMethod === 'Phone' || contactMethod === 'Text') && (
+              <div className="field-narrow">
+                <Field label="Phone number">
+                  {(control) => <input {...control} name="phone" type="tel" autoComplete="tel" />}
                 </Field>
               </div>
+            )}
+            {contactMethod === 'Email' && (
+              <div className="field-narrow">
+                <Field label="Email address">
+                  {(control) => <input {...control} name="email" type="email" autoComplete="email" maxLength={254} />}
+                </Field>
+              </div>
+            )}
+          </div>
 
-              <ChoiceGroup
-                legend="How should we reach you?"
-                name="contactMethod"
-                options={contactChoices}
-                value={contactMethod}
-                onChange={setContactMethod}
-                variant="pill"
-              />
-
-              {(contactMethod === 'Phone' || contactMethod === 'Text') && (
-                <div className="field-narrow">
-                  <Field label="Phone number">
-                    {(control) => <input {...control} name="phone" type="tel" autoComplete="tel" />}
-                  </Field>
-                </div>
-              )}
-              {contactMethod === 'Email' && (
-                <div className="field-narrow">
-                  <Field label="Email address">
-                    {(control) => <input {...control} name="email" type="email" autoComplete="email" maxLength={254} />}
-                  </Field>
-                </div>
-              )}
-            </div>
-          ) : (
+          {anonymous && (
             <p className="callout">
               We won't ask for your name or contact. After you send, you'll get a reference code to
               see updates from the care team.
             </p>
           )}
-        </ChoiceGroup>
+        </div>
 
         <ChoiceGroup
           legend="How soon do you need help?"
@@ -177,7 +180,6 @@ export default function SubmitRequestPage() {
 
         <div className="form-footer">
           <Button type="submit" size="lg">Send Request</Button>
-          <p className="muted">Seen only by Zion's pastoral care team.</p>
         </div>
       </form>
     </div>
