@@ -1,5 +1,3 @@
-import './App.css'
-
 import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase'
 import type { Tables } from './types/database.types'
