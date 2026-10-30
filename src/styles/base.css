@@ -53,6 +53,11 @@ button {
 
 /* ---------- Accessibility ---------- */
 
+/* Make the hidden attribute win over any display set by a class (e.g. .named-fields is a grid) */
+[hidden] {
+  display: none !important;
+}
+
 /* Visible keyboard focus everywhere; never remove this */
 :focus-visible {
   outline: 3px solid var(--color-focus);

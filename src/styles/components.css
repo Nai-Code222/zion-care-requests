@@ -167,6 +167,35 @@
 .choice-tile input:checked {
   border: 7px solid var(--color-primary);
 }
+/* Checkbox version: rounded square with a check mark */
+.choice-tile input[type='checkbox'] {
+  display: grid;
+  place-content: center;
+  border-radius: 6px;
+}
+/* The check mark: a small square cut into a tick shape, shown only when checked */
+.choice-tile input[type='checkbox']::before {
+  content: '';
+  width: 0.875rem;
+  height: 0.875rem;
+  background: var(--color-on-primary);
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  visibility: hidden;
+}
+.choice-tile input[type='checkbox']:checked {
+  border: 2px solid var(--color-primary);
+  background: var(--color-primary);
+}
+.choice-tile input[type='checkbox']:checked::before {
+  visibility: visible;
+}
+/* Windows High Contrast replaces colors; paint the tick in the system text color so it stays visible */
+@media (forced-colors: active) {
+  .choice-tile input[type='checkbox']::before {
+    background: CanvasText;
+    forced-color-adjust: none;
+  }
+}
 /* Selected tile: thicker border; padding shrinks by the extra 0.5px so nothing shifts */
 .choice-tile:has(input:checked) {
   padding: calc(var(--space-4) - 0.5px);

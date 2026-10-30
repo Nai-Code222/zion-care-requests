@@ -64,6 +64,6 @@
   --radius-xl: 28px;
 
   /* ---------- Widths ---------- */
-  --content-width: 70rem;             /* header, main, footer */
+  --content-width: 84rem;             /* header, main, footer: 1344px max on large screens */
   --reading-width: 38rem;             /* text-heavy pages */
 }

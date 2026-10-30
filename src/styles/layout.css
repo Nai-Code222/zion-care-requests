@@ -74,7 +74,7 @@ main {
 
 /* Wider main column for the staff dashboard (not used yet) */
 .layout--wide main {
-  max-width: 80rem;
+  max-width: 90rem;
 }
 
 /* ---------- Layout helpers ---------- */
