@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/Button'
 import ChoiceGroup, { type Choice } from '../components/ChoiceGroup'
 import { IconBadge } from '../components/CircleBadge'
-import EmergencyNote from '../components/EmergencyNote'
 import Field from '../components/Field'
 import type { IconName } from '../components/Icon'
 
@@ -80,7 +79,6 @@ export default function SubmitRequestPage() {
             </li>
           ))}
         </ul>
-        <EmergencyNote>This form isn't monitored around the clock.</EmergencyNote>
       </section>
 
       <form className="card card--lg request-form" onSubmit={handleSubmit} aria-labelledby="request-title" noValidate>

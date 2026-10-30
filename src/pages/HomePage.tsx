@@ -1,10 +1,7 @@
 // src/pages/HomePage.tsx
-import { Form } from 'react-router-dom'
-import { Button, ButtonLink } from '../components/Button'
+import { ButtonLink } from '../components/Button'
 import { IconBadge, NumberBadge } from '../components/CircleBadge'
-import EmergencyNote from '../components/EmergencyNote'
 import type { IconName } from '../components/Icon'
-import ReferenceCodeField from '../components/ReferenceCodeField'
 import Section from '../components/Section'
 
 const steps = [
