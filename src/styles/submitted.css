@@ -1,0 +1,106 @@
+/* src/styles/submitted.css
+ *
+ * Confirmation page shown after a request is sent.
+ */
+
+.submitted-page {
+  max-width: 38.25rem;
+  margin: 0 auto;
+  padding-bottom: 4.5rem;
+}
+
+.submitted-card {
+  --stack-gap: var(--space-8);
+  padding: clamp(1.5rem, 5vw, 3rem);
+}
+
+/* ---------- Check mark, heading, intro ---------- */
+
+.submitted-hero {
+  --stack-gap: 0.875rem;
+  justify-items: center;
+  text-align: center;
+}
+.submitted-hero .page-title {
+  font-size: clamp(1.875rem, 1.5rem + 1.6vw, 2.5rem);  /* smaller than other pages */
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+.submitted-hero .lead {
+  max-width: 28.75rem;
+}
+.success-badge svg {
+  stroke-width: 2.6;
+}
+
+/* ---------- The reference code, large and easy to read back ---------- */
+
+.code-panel {
+  --stack-gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-6) var(--space-5);
+  border-radius: 18px;
+  background: var(--color-surface-tint);
+  text-align: center;
+}
+.code-panel__label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.code-panel__code {
+  font-family: var(--font-heading);
+  font-size: clamp(2.125rem, 1.6rem + 2.4vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  overflow-wrap: anywhere;            /* long codes wrap instead of overflowing */
+}
+.code-panel .muted {
+  max-width: 25rem;
+}
+
+/* Copy / Print buttons */
+.code-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-top: var(--space-3);
+}
+.code-panel__actions .btn {
+  gap: var(--space-2);
+  min-width: 8.75rem;
+  min-height: 3.125rem;
+  border-radius: var(--radius);
+}
+
+/* "Copied!" message; hidden until there's something to say */
+.code-panel__status {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.code-panel__status:empty {
+  display: none;
+}
+
+/* ---------- What happens next ---------- */
+
+.next-steps {
+  gap: var(--space-4);
+}
+.next-steps li {
+  line-height: 1.6;
+}
+.next-steps li > span:last-child {
+  padding-top: 2px;                   /* lines the text up with the badge */
+}
+
+/* Print just the card's content (base.css already hides the header, footer, .no-print) */
+@media print {
+  .submitted-card {
+    padding: 0;
+  }
+}

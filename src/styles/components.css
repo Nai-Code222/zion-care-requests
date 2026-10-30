@@ -1,41 +1,388 @@
-/* src/styles/components.css */
+/* src/styles/components.css
+ *
+ * Reusable pieces used on more than one page. Each section names the React
+ * component (or markup) it styles.
+ */
 
-/* Form fields: <div className="field"><label/><input/><p className="field-error"/></div> */
-.field { display: grid; gap: var(--space-1); margin-bottom: var(--space-4); }
-.field label { font-weight: 600; }
-.field input, .field select, .field textarea {
-  min-height: 44px;                 /* touch target */
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border);
+/* ======================================================================
+   Forms
+   ====================================================================== */
+
+/* <Field>: <div class="field"><label/><input/><p class="field-error"/></div> */
+.field {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.field label {
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.field input,
+.field select,
+.field textarea {
+  min-height: 3.5rem;                 /* touch target; grows with text size */
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-border-strong);
   border-radius: var(--radius);
   background: var(--color-surface);
+  font-size: var(--text-md);
 }
-.field-hint  { color: var(--color-text-muted); font-size: var(--text-sm); }
-.field-error { color: var(--color-danger); font-size: var(--text-sm); }
-[aria-invalid='true'] { border-color: var(--color-danger); }
+.field textarea {
+  min-height: 8.75rem;
+  padding-block: 0.875rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+.field-optional {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+.field-hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
 
-/* Buttons: works on <button> and <Link> */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 44px;
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius);
+/* Two or more fields side by side, wrapping when narrow. Use with .auto-grid */
+.field-row {
+  --grid-min: 13.75rem;
+  gap: 0 var(--space-4);
+  margin-top: var(--space-5);
+}
+.field-row .field {
+  margin-bottom: 0;
+}
+
+/* A short field (phone, email) that shouldn't stretch the full width */
+.field-narrow {
+  max-width: 22.5rem;
+}
+.field-narrow .field {
+  margin-bottom: 0;
+}
+
+/* A form question: a fieldset legend, or a <Field size="question"> label */
+.question,
+.field label.question {
+  padding: 0;
+  font-family: var(--font-heading);
+  font-size: 1.4375rem;
+  font-weight: 900;
+  line-height: 1.3;
+}
+.question .field-optional {
+  font-size: var(--text-base);
+}
+
+/* Reference-code entry: large, spaced, uppercase so codes are easy to read back */
+.input--code {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.input--code::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Tinted note inside a form */
+.callout {
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) 1.125rem;
+  border-radius: 14px;
+  background: var(--color-surface-tint);
+  line-height: 1.55;
+}
+
+/* Bottom of a form or card: main button plus a note or secondary link */
+.form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--color-divider);
+}
+.form-footer .btn {
+  flex: 1 1 15rem;
+  max-width: 20rem;
+}
+.form-footer p {
+  flex: 1 1 12.5rem;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+/* ======================================================================
+   <ChoiceGroup>: single-choice questions, shown as tiles or pills
+   ====================================================================== */
+
+.choice-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Tile layout. Use with .auto-grid; <ChoiceGroup minTileWidth> overrides --grid-min */
+.choice-tiles {
+  --grid-min: 13.75rem;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.choice-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-height: 4.75rem;
+  padding: var(--space-4);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 16px;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+/* The real radio input, restyled as a round dot */
+.choice-tile input {
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 1px 0 0;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface);
+  appearance: none;
+}
+.choice-tile input:checked {
+  border: 7px solid var(--color-primary);
+}
+/* Selected tile: thicker border; padding shrinks by the extra 0.5px so nothing shifts */
+.choice-tile:has(input:checked) {
+  padding: calc(var(--space-4) - 0.5px);
+  border: 2px solid var(--color-primary);
+  background: var(--color-surface-tint);
+}
+.choice-tile__text {
+  display: grid;
+  gap: 3px;
+}
+.choice-tile__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+  line-height: 1.33;
+}
+.choice-tile__description {
+  font-size: var(--text-sm);
+  line-height: 1.47;
+  color: var(--color-text-muted);
+}
+
+/* Pill layout */
+.choice-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: var(--space-4);
+}
+
+.choice-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 var(--space-5);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* The radio is invisible but covers the pill, so it stays clickable,
+   in the keyboard order, and announced by screen readers */
+.choice-pill input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.choice-pill:has(input:checked) {
+  border-color: var(--color-primary);
   background: var(--color-primary);
   color: var(--color-on-primary);
-  font-weight: 600;
+}
+
+/* Keyboard focus: draw the ring around the whole tile/pill, not the hidden radio */
+.choice-tile input:focus-visible {
+  outline: none;
+}
+.choice-tile:has(input:focus-visible),
+.choice-pill:has(input:focus-visible) {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ======================================================================
+   <Button> and <ButtonLink>: works on <button> and <a>
+   ====================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;                /* 44px touch target; grows with text size */
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-btn);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-align: center;
   text-decoration: none;
   cursor: pointer;
 }
-.btn:hover { background: var(--color-primary-hover); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn--secondary {
-  background: var(--color-surface);
-  color: var(--color-primary);
-  border-color: var(--color-border);
+.btn:hover {
+  background: var(--color-primary-hover);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* Urgency badges: always show the word, so color is never the only signal */
+/* size="lg" */
+.btn--lg {
+  min-height: 3.75rem;
+  padding: var(--space-3) var(--space-6);
+  font-size: 1.1875rem;
+}
+/* block */
+.btn--block {
+  width: 100%;
+}
+
+/* variant="outline" | "soft" | "inverse" */
+.btn--outline {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+.btn--soft {
+  background: var(--color-surface-tint);
+  color: var(--color-primary);
+}
+.btn--outline:hover,
+.btn--soft:hover {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.btn--inverse {                       /* for dark backgrounds */
+  background: var(--color-surface);
+  color: var(--color-primary-deep);
+}
+.btn--inverse:hover {
+  background: var(--color-surface-tint);
+}
+
+/* A row of buttons, centered, wrapping to one per line on phones */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+.button-row .btn {
+  flex: 1 1 12.5rem;
+  max-width: 16.25rem;
+}
+
+/* ======================================================================
+   Cards and badges
+   ====================================================================== */
+
+/* White panel on the tinted page background */
+.card {
+  padding: clamp(1.375rem, 3.5vw, 2rem);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.card > :last-child {
+  margin-bottom: 0;
+}
+/* A page's main card (the request form, the confirmation) */
+.card--lg {
+  border-radius: var(--radius-card-lg);
+}
+.card__title {
+  margin-bottom: var(--space-2);
+  font-size: 1.375rem;
+}
+
+/* <IconBadge>, <NumberBadge>: an icon or number in a circle */
+.circle-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--color-primary);
+}
+.circle-badge--tint {
+  background: var(--color-surface-tint);
+}
+.circle-badge--surface {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--color-surface);
+}
+.circle-badge--number {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 900;
+}
+.circle-badge--sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: var(--text-base);
+}
+.circle-badge--lg {
+  width: 4rem;
+  height: 4rem;
+}
+
+/* A list where each item is a badge followed by text. Add role="list" */
+.icon-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.icon-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  font-size: 1.0625rem;
+}
+
+/* Urgency badges: always show the word, so color is never the only signal (not used yet) */
 .badge {
   display: inline-block;
   padding: 0 var(--space-2);
@@ -47,14 +394,66 @@
 .badge--soon    { background: var(--soon-bg);    color: var(--soon-text); }
 .badge--routine { background: var(--routine-bg); color: var(--routine-text); }
 
-/* Reference codes */
-.ref-code { font-family: var(--font-mono); letter-spacing: 0.05em; }
+/* ======================================================================
+   Text helpers
+   ====================================================================== */
 
-/* Staff tables */
-table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
-th, td {
-  text-align: left;
+/* Main page heading (request form, confirmation) */
+.page-title {
+  font-size: clamp(2.125rem, 1.6rem + 2.2vw, 3rem);   /* 34px phone → 48px desktop */
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+}
+/* Centered heading above a page section */
+.section-title {
+  font-size: var(--text-2xl);
+  text-align: center;
+}
+/* Small uppercase label above a heading */
+.eyebrow {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+/* Larger intro paragraph under a page title */
+.lead {
+  max-width: 35rem;
+  font-size: var(--text-lead);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.muted {
+  color: var(--color-text-muted);
+}
+.strong-link {
+  font-weight: 700;
+  color: var(--color-text);
+}
+/* Reference codes in staff views (not used yet) */
+.ref-code {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+/* ======================================================================
+   Staff tables (not used yet)
+   ====================================================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+}
+th,
+td {
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--color-border);
+  text-align: left;
 }
-th { font-size: var(--text-sm); color: var(--color-text-muted); }
+th {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}

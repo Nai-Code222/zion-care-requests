@@ -1,0 +1,60 @@
+/* src/styles/request.css
+ *
+ * Submit-request page only: intro column beside the form card,
+ * stacking into one column on narrow screens.
+ */
+
+.request-page {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-14) 3rem;
+  padding-bottom: 4.5rem;
+}
+
+/* ---------- Left column: intro and reassurances ---------- */
+
+.request-intro {
+  --stack-gap: var(--space-5);
+  flex: 1 1 18.75rem;                 /* grows, but wraps above the form below ~300px */
+  max-width: 25rem;
+  padding-top: var(--space-5);
+}
+
+.reassurances {
+  gap: 1.125rem;
+  margin-top: var(--space-2);
+}
+.reassurances li {
+  line-height: 1.53;
+}
+.reassurances li > span:last-child {
+  padding-top: 0.4rem;                /* lines the text up with the middle of the badge */
+}
+
+/* ---------- Right column: the form card ---------- */
+
+.request-form {
+  /* The huge grow value makes the form take all the spare width,
+     so the intro column stays at its natural size */
+  flex: 999 1 32.5rem;
+  min-width: 0;
+  display: grid;
+  gap: var(--space-10);
+  padding: clamp(1.375rem, 4vw, 2.75rem);
+}
+.request-form > .field {
+  margin-bottom: 0;
+}
+
+/* Name + contact questions nested under "Should we know who you are?" */
+.named-fields {
+  display: grid;
+  gap: var(--space-6);
+}
+.named-fields .question {
+  font-size: var(--text-lg);
+}
+.named-fields .choice-pills {
+  margin-top: var(--space-3);
+}
