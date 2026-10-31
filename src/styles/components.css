@@ -11,6 +11,7 @@
 /* <Field>: <div class="field"><label/><input/><p class="field-error"/></div> */
 .field {
   display: grid;
+  align-content: start;               /* a neighbour's error message mustn't stretch this field's rows */
   gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
@@ -293,6 +294,25 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* Busy (e.g. sending): still focusable, so not :disabled, but clearly not clickable again */
+.btn[aria-disabled='true'] {
+  opacity: 0.8;
+  cursor: progress;
+}
+
+/* Small spinning ring inside a button; sized to the text, coloured by it */
+.spinner {
+  width: 1em;
+  height: 1em;
+  margin-inline-end: var(--space-2);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* size="lg" */
 .btn--lg {
@@ -456,6 +476,18 @@
 }
 .muted {
   color: var(--color-text-muted);
+}
+/* Read by screen readers but not shown, e.g. a status message the visible UI already conveys */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 .strong-link {
   font-weight: 700;
