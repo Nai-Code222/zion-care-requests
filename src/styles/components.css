@@ -113,6 +113,7 @@
   gap: var(--space-4) var(--space-6);
   padding-top: 1.75rem;
   border-top: 1px solid var(--color-divider);
+  justify-content: center;
 }
 .form-footer .btn {
   flex: 1 1 15rem;
@@ -449,7 +450,6 @@
 }
 /* Larger intro paragraph under a page title */
 .lead {
-  max-width: 35rem;
   font-size: var(--text-lead);
   line-height: 1.6;
   color: var(--color-text-muted);

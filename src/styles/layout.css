@@ -7,10 +7,23 @@
 
 /* ---------- Page frame ---------- */
 
+/* At least one screen tall, with main taking the spare height, so the footer
+   sits at the bottom of short pages instead of halfway up the screen */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;                 /* mobile: ignores the collapsing address bar */
+}
+main {
+  flex: 1 0 auto;
+}
+
 /* Header, main, and footer share one centered column */
 .site-header nav,
 main,
 .site-footer {
+  width: 100%;                        /* auto margins would otherwise shrink flex items to their content */
   max-width: var(--content-width);
   margin: 0 auto;
   padding-inline: var(--space-6);
@@ -113,6 +126,11 @@ main {
 /* Pushes a flex child (e.g. the last nav item) to the far end */
 .push-end {
   margin-inline-start: auto;
+}
+
+/* Centers text and inline content, e.g. a short message page */
+.text-center {
+  text-align: center;
 }
 
 /* Text-heavy pages read better narrower than the home page (not used yet) */
