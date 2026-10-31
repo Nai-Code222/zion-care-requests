@@ -1,14 +1,18 @@
-
 /* src/index.css */
 
 /*
- * Mobile-first: base rules are the phone layout, and the single breakpoint below
- * (48rem ≈ 768px) adds the computer layout. Breakpoints are in rem so they move
- * with the user's text size — someone at 200% text gets the phone layout sooner,
- * which is what they need.
+ * Mobile-first, with no fixed breakpoints: layouts use flex-wrap and
+ * auto-fit grids sized in rem, so they reflow on their own, both on narrow
+ * screens and when someone turns up their text size.
+ *
+ * Order matters: tokens first (everything else reads them), then shared
+ * styles, then page-specific files.
  */
 
 @import './styles/tokens.css';
 @import './styles/base.css';
 @import './styles/layout.css';
 @import './styles/components.css';
+@import './styles/home.css';
+@import './styles/request.css';
+@import './styles/submitted.css';

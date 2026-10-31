@@ -1,18 +1,121 @@
-/* src/styles/layout.css */
-header {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-}
+/* src/styles/layout.css
+ *
+ * The page frame (header, main, footer) and layout helpers that arrange
+ * children without styling them. Mix helpers with a page class:
+ *   <div className="stack hero__intro">
+ */
 
-header nav,
-main {
+/* ---------- Page frame ---------- */
+
+/* Header, main, and footer share one centered column */
+.site-header nav,
+main,
+.site-footer {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: var(--space-3) var(--space-4);
+  padding-inline: var(--space-6);
 }
 
-header nav { display: flex; flex-wrap: wrap; gap: var(--space-4); }
-main { padding-block: var(--space-6); }
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding-block: 1.375rem;
+}
 
-/* Staff dashboard tables need more room */
-.layout--wide main { max-width: 72rem; }
+main {
+  padding-block: var(--space-6) 0;
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3) var(--space-6);
+  padding-block: 3rem var(--space-10);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.site-footer p {
+  margin: 0;
+}
+
+/* Brand lockup in the header: "Zion Church  Care" */
+.brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;                /* 44px touch target */
+  color: var(--color-text);
+  text-decoration: none;
+  font-family: var(--font-heading);
+}
+.brand__name {
+  font-size: 1.3125rem;
+  font-weight: 900;
+}
+.brand__sub {
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;                /* 44px touch target */
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* Wider main column for the staff dashboard (not used yet) */
+.layout--wide main {
+  max-width: 90rem;
+}
+
+/* ---------- Layout helpers ---------- */
+
+/*
+ * .stack: children in a column with even gaps and no stray margins.
+ * Change the gap per use by setting --stack-gap, e.g. .step { --stack-gap: 0.625rem; }
+ */
+.stack {
+  display: grid;
+  align-content: start;
+  gap: var(--stack-gap, var(--space-6));
+}
+.stack > * {
+  margin: 0;
+}
+
+/*
+ * .auto-grid: as many equal columns as fit, each at least --grid-min wide,
+ * wrapping to fewer columns (down to one) as the space shrinks.
+ * min(..., 100%) stops a column overflowing on very narrow screens.
+ */
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min, 15rem), 100%), 1fr));
+}
+
+/* .list-reset: a <ul>/<ol> without bullets or indent. Add role="list" too,
+   so Safari/VoiceOver still announce it as a list. */
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Pushes a flex child (e.g. the last nav item) to the far end */
+.push-end {
+  margin-inline-start: auto;
+}
+
+/* Text-heavy pages read better narrower than the home page (not used yet) */
+.narrow {
+  max-width: var(--reading-width);
+}

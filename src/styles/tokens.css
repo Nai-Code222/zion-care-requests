@@ -1,38 +1,69 @@
-/* src/styles/tokens.css */
+/* src/styles/tokens.css
+ *
+ * Design tokens: every color, font, size and spacing value the app uses.
+ * Other files read these with var(--name), e.g. padding: var(--space-4).
+ * Change a value here and it updates everywhere.
+ */
 :root {
-  /* Color */
-  --color-bg: #f7f7f5;
-  --color-surface: #ffffff;
-  --color-text: #1c1c1e;
-  --color-text-muted: #5b5b61;
-  --color-border: #d9d9de;
-  --color-primary: #2f5d8a;
-  --color-primary-hover: #244a6f;
-  --color-on-primary: #ffffff;
+  /* ---------- Color ---------- */
+  --color-bg: #eff8fc;                /* page background */
+  --color-surface: #ffffff;           /* cards, inputs */
+  --color-surface-tint: #eff8fc;      /* tinted panels and selected states inside a card */
+  --color-text: #242528;
+  --color-text-muted: #4a5764;        /* 7.6:1 on white, 7.0:1 on --color-bg */
+  --color-border: #cccccc;            /* decorative dividers only */
+  --color-divider: #e3ecf0;           /* hairline between sections inside a card */
+  --color-border-strong: #6b7884;     /* form controls: 4.6:1 on white (WCAG 1.4.11) */
+  --color-primary: #00546e;           /* 8.6:1 with white text */
+  --color-primary-hover: #0e4152;
+  --color-primary-deep: #0e4152;
+  --color-on-primary: #ffffff;        /* text on a primary background */
   --color-danger: #b42318;
   --color-focus: #1a73e8;
 
   /* Urgency: background + text pairs, each passes WCAG AA contrast */
-  --urgent-bg: #fde8e8;  --urgent-text: #9b1c1c;
-  --soon-bg: #fef3c7;    --soon-text: #92400e;
-  --routine-bg: #e6f4ea; --routine-text: #1e6b3a;
+  --urgent-bg: #fde8e8;
+  --urgent-text: #9b1c1c;
+  --soon-bg: #fef3c7;
+  --soon-text: #92400e;
+  --routine-bg: #e6f4ea;
+  --routine-text: #1e6b3a;
 
-  /* Type */
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* ---------- Type ---------- */
+  --font-sans: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading: Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.75rem;
 
-  /* Spacing (4px scale) */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
+  --text-sm: 0.9375rem;                                        /* 15px */
+  --text-base: 1rem;                                           /* 16px */
+  --text-md: 1.125rem;                                         /* 18px */
+  --text-lg: 1.25rem;                                          /* 20px */
+  --text-xl: 1.75rem;                                          /* 28px */
+  /* clamp(smallest, preferred, largest): grows with screen width between the two ends */
+  --text-2xl: clamp(1.625rem, 1.2rem + 1.6vw, 2rem);           /* 26px phone → 32px desktop */
+  --text-lead: clamp(1.125rem, 1rem + 0.4vw, 1.25rem);         /* 18px phone → 20px desktop */
+  --text-display: clamp(2.375rem, 1.5rem + 3.75vw, 3.75rem);   /* 38px phone → 60px desktop */
 
-  --radius: 6px;
-  --content-width: 48rem;
+  /* ---------- Spacing (4px scale: --space-N = N × 4px) ---------- */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-14: 3.5rem;   /* 56px */
+  --space-24: 6rem;     /* 96px */
+
+  /* ---------- Corners ---------- */
+  --radius: 12px;                     /* inputs, small buttons */
+  --radius-btn: 14px;
+  --radius-lg: 20px;                  /* default card */
+  --radius-card-lg: 24px;             /* page-level form / confirmation cards */
+  --radius-xl: 28px;
+
+  /* ---------- Widths ---------- */
+  --content-width: 84rem;             /* header, main, footer: 1344px max on large screens */
+  --reading-width: 38rem;             /* text-heavy pages */
 }

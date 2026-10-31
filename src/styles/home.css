@@ -1,0 +1,55 @@
+/* src/styles/home.css
+ *
+ * Home page only. Shared pieces (.stack, .auto-grid, .card, .lead, ...)
+ * live in layout.css and components.css.
+ */
+
+/* Space between the page's sections */
+.home {
+  display: grid;
+  gap: clamp(var(--space-14), 8vw, var(--space-24));   /* 56px phone → 96px desktop */
+}
+
+/* ---------- Hero ---------- */
+
+.hero__intro {
+  --stack-gap: var(--space-5);
+}
+.hero__title {
+  font-size: var(--text-display);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  text-align: center;
+}
+.hero__subtitle {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ---------- "How it works" and "We can help with" ---------- */
+
+.steps  { gap: var(--space-4); }
+.topics { gap: var(--space-3); }
+
+/* Step card: number badge, title, description */
+.step {
+  --stack-gap: 0.625rem;
+  padding: 1.625rem;
+}
+.step p {
+  line-height: 1.5625;
+}
+
+/* Topic card: icon badge beside a label */
+.topic {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: 18px;
+}
+.topic__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+}

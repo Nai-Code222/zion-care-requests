@@ -1,5 +1,13 @@
-/* src/styles/base.css */
-*, *::before, *::after { box-sizing: border-box; }
+/* src/styles/base.css
+ *
+ * Defaults for plain HTML elements. No classes here.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -10,22 +18,71 @@ body {
   background: var(--color-bg);
 }
 
-h1, h2, h3 { line-height: 1.2; margin: 0 0 var(--space-4); }
+/* ---------- Text ---------- */
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-weight: 900;
+  line-height: 1.2;
+}
 h1 { font-size: var(--text-xl); }
 h2 { font-size: var(--text-lg); }
-p  { margin: 0 0 var(--space-4); }
-a  { color: var(--color-primary); }
-code { font-family: var(--font-mono); }
+h3 { font-size: var(--text-lg); font-weight: 700; }
+
+p {
+  margin: 0 0 var(--space-4);
+}
+a {
+  color: var(--color-primary);
+}
+code {
+  font-family: var(--font-mono);
+}
 
 /* Form controls don't inherit fonts by default */
-input, select, textarea, button { font: inherit; color: inherit; }
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Accessibility ---------- */
+
+/* Make the hidden attribute win over any display set by a class (e.g. .named-fields is a grid) */
+[hidden] {
+  display: none !important;
+}
 
 /* Visible keyboard focus everywhere; never remove this */
-:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Printing ---------- */
+
+/* Print just the page content: no site header, footer, or anything marked .no-print */
+@media print {
+  .site-header,
+  .site-footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
   }
 }
