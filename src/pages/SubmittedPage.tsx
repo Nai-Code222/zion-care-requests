@@ -1,6 +1,6 @@
 // src/pages/SubmittedPage.tsx
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { Button, ButtonLink } from '../components/Button'
 import { NumberBadge } from '../components/CircleBadge'
 import Icon from '../components/Icon'
@@ -12,15 +12,18 @@ const nextSteps = [
   'Check back anytime with your code to see updates.',
 ]
 
-// UI only for now: the request form will pass the real code in router state.
-const SAMPLE_CODE = 'ZC-7K4M2P'
-
 export default function SubmittedPage() {
   const location = useLocation()
-  const code = (location.state as { code?: string } | null)?.code ?? SAMPLE_CODE
+  // The request form passes the code the database generated in router state
+  const code = (location.state as { code?: string } | null)?.code
   const [copyMessage, setCopyMessage] = useState('')
 
-  async function copyCode() {
+  // Opened directly (no request was just sent): there's no code to show, so start a request.
+  // Router state survives a refresh, so a member reloading this page still sees their code.
+  if (!code) return <Navigate to="/request" replace />
+
+  // An arrow function (not a hoisted declaration) so TypeScript knows code is set here
+  const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(code)
       setCopyMessage('Code copied.')

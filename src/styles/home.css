@@ -28,7 +28,8 @@
 
 /* ---------- "How it works" and "We can help with" ---------- */
 
-.steps  { gap: var(--space-4); }
+/* 12.5rem lets all three steps share a row from ~680px, instead of leaving one alone on a second row */
+.steps  { gap: var(--space-4); --grid-min: 12.5rem; }
 .topics { gap: var(--space-3); }
 
 /* Step card: number badge, title, description */

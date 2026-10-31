@@ -1,185 +1,352 @@
 // src/pages/SubmitRequestPage.tsx
-import { useState, type SubmitEvent } from 'react'
+import { useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/Button'
 import ChoiceGroup, { type Choice } from '../components/ChoiceGroup'
-import { IconBadge } from '../components/CircleBadge'
 import Field from '../components/Field'
-import type { IconName } from '../components/Icon'
+import { submitCareRequest } from '../services/careRequests'
+import { getRequestFormChoices, type RequestFormChoices } from '../services/lookup'
 
-// Labels match the lookup tables (request_type, urgency_type, contact_method_types).
-// They'll be swapped for the table rows (with IDs) when the form is wired to Supabase.
+// The choices come from the lookup tables (request_type, urgency_type, contact_method_types).
+// The maps below are UI copy the tables don't hold, keyed by the table's label. A row added
+// later still shows up, using its table label, until wording is written for it here.
 const MEMBER_NOTES_MAX = 250 // care_requests_member_notes_length
 const NAME_MAX = 100 // care_requests_first_length / _last_length
+// Same rules as the database checks, so a bad value is caught here with a clear message
+const PHONE_PATTERN = /^\+?[0-9 ().-]{7,20}$/
+const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ 
 
-const reassurances: { icon: IconName; title: string; body: string }[] = [
-  { icon: 'shield', title: 'Private.', body: 'Only the care team reads it. Other members never see it.' },
-  { icon: 'clock', title: 'About a minute.', body: 'A few short questions.' },
-  { icon: 'card', title: 'No account needed.', body: "You'll get a code to check on your request." },
-]
+type FormErrors = Partial<
+  Record<'name' | 'contactMethod' | 'phone' | 'email' | 'urgency' | 'requestType' | 'memberNotes', string>
+>
 
-const privacyChoices: Choice<'named' | 'anonymous'>[] = [
-  { value: 'named', label: 'Share my name', description: 'The care team can reach out to you.' },
-  { value: 'anonymous', label: 'Stay anonymous', description: 'No name needed. Use a code to check in.' },
-]
+const contactLabels: Record<string, string> = {
+  Phone: 'Phone call',
+  Text: 'Text message',
+  'No Contact': "Don't contact me",
+}
 
-type ContactMethod = 'Phone' | 'Email' | 'Text' | 'No Contact'
-
-const contactChoices: Choice<ContactMethod>[] = [
-  { value: 'Phone', label: 'Phone call' },
-  { value: 'Text', label: 'Text message' },
-  { value: 'Email', label: 'Email' },
-  { value: 'No Contact', label: "Don't contact me" },
-]
-
-// Most urgent first, matching urgency_rank
-const urgencyChoices: Choice<string>[] = [
-  { value: 'Urgent', label: 'Urgent', description: 'Within 24 hours' },
-  { value: 'Soon', label: 'Soon', description: 'This week' },
-  { value: 'Routine', label: 'Routine', description: 'When the team can' },
-]
-
-const requestTypes: Choice<string>[] = [
-  'Prayer Support',
-  'Hospital Visit',
-  'Meal Delivery',
-  'Counseling Referral',
-  'Other',
-].map((label) => ({ value: label, label }))
+const urgencyHints: Record<string, string> = {
+  Urgent: 'Within 24 hours',
+  Soon: 'This week',
+  Routine: 'When the team can',
+}
 
 export default function SubmitRequestPage() {
   const navigate = useNavigate()
-  const [privacy, setPrivacy] = useState<'named' | 'anonymous'>('named')
-  const [contactMethod, setContactMethod] = useState<ContactMethod | null>(null)
-  const [urgency, setUrgency] = useState<string | null>(null)
-  const [requestType, setRequestType] = useState<string | null>(null)
+  const [anonymous, setAnonymous] = useState(false) // care_requests.anonymous_flag
+  const [contactMethodId, setContactMethodId] = useState<number | null>(null) // care_requests.contact_method_id
+  const [urgencyId, setUrgencyId] = useState<number | null>(null) // care_requests.urgency_type_id
+  const [requestTypeId, setRequestTypeId] = useState<number | null>(null) // care_requests.request_type_id
   const [notes, setNotes] = useState('')
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
 
-  // UI only for now: the request isn't saved yet.
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  // Lookup rows from Supabase; null until they arrive
+  const [choices, setChoices] = useState<RequestFormChoices | null>(null)
+  const [loadError, setLoadError] = useState(false)
+
+  useEffect(() => {
+    // Skip the state update if the page was left before the request finished
+    let ignore = false
+    getRequestFormChoices()
+      .then((rows) => { if (!ignore) setChoices(rows) })
+      .catch(() => { if (!ignore) setLoadError(true) })
+    return () => { ignore = true }
+  }, [])
+
+  const contactChoices: Choice<number>[] = (choices?.contactMethods ?? []).map((row) => ({
+    value: row.contact_method_type_id,
+    label: contactLabels[row.contact_method] ?? row.contact_method,
+  }))
+
+  // Already most urgent first: getUrgencyTypes sorts by urgency_rank
+  const urgencyChoices: Choice<number>[] = (choices?.urgencyTypes ?? []).map((row) => ({
+    value: row.urgency_type_id,
+    label: row.urgency,
+    description: urgencyHints[row.urgency],
+  }))
+
+  // The state holds an ID, but which contact field to show depends on the method's label
+  const contactMethod = choices?.contactMethods.find(
+    (row) => row.contact_method_type_id === contactMethodId,
+  )?.contact_method
+  const needsPhone = contactMethod === 'Phone' || contactMethod === 'Text'
+  const needsEmail = contactMethod === 'Email'
+
+  // An error goes away as soon as the person changes that answer
+  function clearErrors(...keys: (keyof FormErrors)[]) {
+    setErrors((current) => {
+      const next = { ...current }
+      for (const key of keys) delete next[key]
+      return next
+    })
+  }
+
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
-    navigate('/request/submitted')
+    if (submitting) return
+
+    const form = event.currentTarget
+    const data = new FormData(form)
+    const text = (name: string) => String(data.get(name) ?? '').trim()
+    const first = text('first')
+    const last = text('last')
+    const phone = text('phone')
+    const email = text('email')
+
+    const found: FormErrors = {}
+    if (!anonymous && !first) found.name = 'Enter your first name, or choose Stay anonymous.'
+    if (contactMethodId === null) found.contactMethod = 'Choose how we should reach you.'
+    if (needsPhone && !PHONE_PATTERN.test(phone)) {
+      found.phone = phone ? 'Enter a phone number like 301-555-0142.' : 'Enter a phone number.'
+    }
+    if (needsEmail && !EMAIL_PATTERN.test(email)) {
+      found.email = email ? 'Enter an email address like name@example.com.' : 'Enter an email address.'
+    }
+    if (urgencyId === null) found.urgency = 'Choose how soon you need help.'
+    if (requestTypeId === null) found.requestType = 'Choose the kind of care you need.'
+    if (!notes.trim()) found.memberNotes = 'Tell us a little about what you need.'
+
+    if (Object.keys(found).length > 0 || contactMethodId === null || urgencyId === null || requestTypeId === null) {
+      setErrors(found)
+      // Move focus to the first problem once it renders, so keyboard and screen reader users
+      // land on it and hear its error message
+      requestAnimationFrame(() => form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus())
+      return
+    }
+
+    setErrors({})
+    setSubmitError(false)
+    setSubmitting(true)
+    try {
+      const code = await submitCareRequest({
+        p_request_type_id: requestTypeId,
+        p_urgency_type_id: urgencyId,
+        p_contact_method_id: contactMethodId,
+        // An anonymous request never sends a name, even one typed before the box was checked
+        p_anonymous: anonymous,
+        p_first: anonymous ? undefined : first,
+        p_last: anonymous || !last ? undefined : last,
+        p_no_contact: contactMethod === 'No Contact',
+        p_phone: needsPhone ? phone : undefined,
+        p_email: needsEmail ? email : undefined,
+        p_member_notes: notes.trim(),
+      })
+      // replace: Back from the confirmation skips the sent form instead of inviting a second send
+      navigate('/request/submitted', { state: { code }, replace: true })
+    } catch {
+      setSubmitError(true)
+      setSubmitting(false)
+    }
   }
 
   return (
     <div className="request-page">
       <section className="stack request-intro" aria-labelledby="request-title">
-        <p className="eyebrow">Pastoral Care</p>
         <h1 id="request-title" className="page-title">How can we care for you?</h1>
         <p className="lead">
-          Tell us what you need. We'll make sure the right person from our care team follows up.
+          Tell us what you need. We'll make sure a person from our care team follows up.
         </p>
-        <ul className="icon-list reassurances" role="list">
-          {reassurances.map((item) => (
-            <li key={item.title}>
-              <IconBadge name={item.icon} tone="surface" />
-              <span>
-                <strong>{item.title}</strong> {item.body}
-              </span>
-            </li>
-          ))}
-        </ul>
       </section>
 
-      <form className="card card--lg request-form" onSubmit={handleSubmit} aria-labelledby="request-title" noValidate>
-        <ChoiceGroup
-          legend="Should we know who you are?"
-          name="privacy"
-          options={privacyChoices}
-          value={privacy}
-          onChange={setPrivacy}
+      {/* Shown whole once the choices arrive, so no question renders with an empty list */}
+      {loadError ? (
+        <p className="callout" role="alert">
+          We couldn't load the form. Please refresh the page to try again.
+        </p>
+      ) : !choices ? (
+        <p className="muted">Loading the form…</p>
+      ) : (
+        <form
+          className="card card--lg request-form"
+          onSubmit={handleSubmit}
+          aria-labelledby="request-title"
+          aria-busy={submitting || undefined}
+          noValidate
         >
-          {privacy === 'named' ? (
+          <div className="identity-fields">
+            {/* Hidden, not removed, so anything typed is still there if they uncheck */}
+            <div className="auto-grid field-row" hidden={anonymous}>
+              <Field label="First name" error={errors.name}>
+                {(control) => (
+                  <input
+                    {...control}
+                    name="first"
+                    autoComplete="given-name"
+                    maxLength={NAME_MAX}
+                    onChange={() => clearErrors('name')}
+                  />
+                )}
+              </Field>
+              <Field label="Last name" optional>
+                {(control) => <input {...control} name="last" autoComplete="family-name" maxLength={NAME_MAX} />}
+              </Field>
+            </div>
+  
+            <label className="choice-tile">
+              <input
+                type="checkbox"
+                name="anonymous"
+                checked={anonymous}
+                onChange={(e) => {
+                  setAnonymous(e.target.checked)
+                  clearErrors('name')
+                }}
+              />
+              <span className="choice-tile__text">
+                <span className="choice-tile__label">Stay anonymous</span>
+                <span className="choice-tile__description">No name needed. Use a code to check in.</span>
+              </span>
+            </label>
+  
+            {anonymous && (
+              <p className="callout">
+                We won't ask for your name. After you send, you'll get a reference code to see
+                updates from the care team.
+              </p>
+            )}
+  
             <div className="named-fields">
-              <div className="auto-grid field-row">
-                <Field label="First name">
-                  {(control) => <input {...control} name="first" autoComplete="given-name" maxLength={NAME_MAX} />}
-                </Field>
-                <Field label="Last name" optional>
-                  {(control) => <input {...control} name="last" autoComplete="family-name" maxLength={NAME_MAX} />}
-                </Field>
-              </div>
-
               <ChoiceGroup
                 legend="How should we reach you?"
                 name="contactMethod"
                 options={contactChoices}
-                value={contactMethod}
-                onChange={setContactMethod}
+                value={contactMethodId}
+                onChange={(id) => {
+                  setContactMethodId(id)
+                  clearErrors('contactMethod', 'phone', 'email')
+                }}
                 variant="pill"
+                error={errors.contactMethod}
               />
 
-              {(contactMethod === 'Phone' || contactMethod === 'Text') && (
+              {needsPhone && (
                 <div className="field-narrow">
-                  <Field label="Phone number">
-                    {(control) => <input {...control} name="phone" type="tel" autoComplete="tel" />}
+                  <Field label="Phone number" error={errors.phone}>
+                    {(control) => (
+                      <input
+                        {...control}
+                        name="phone"
+                        type="tel"
+                        autoComplete="tel"
+                        onChange={() => clearErrors('phone')}
+                      />
+                    )}
                   </Field>
                 </div>
               )}
-              {contactMethod === 'Email' && (
+              {needsEmail && (
                 <div className="field-narrow">
-                  <Field label="Email address">
-                    {(control) => <input {...control} name="email" type="email" autoComplete="email" maxLength={254} />}
+                  <Field label="Email address" error={errors.email}>
+                    {(control) => (
+                      <input
+                        {...control}
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        maxLength={254}
+                        onChange={() => clearErrors('email')}
+                      />
+                    )}
                   </Field>
                 </div>
               )}
             </div>
-          ) : (
-            <p className="callout">
-              We won't ask for your name or contact. After you send, you'll get a reference code to
-              see updates from the care team.
+          </div>
+  
+          <ChoiceGroup
+            legend="How soon do you need help?"
+            name="urgency"
+            options={urgencyChoices}
+            value={urgencyId}
+            onChange={(id) => {
+              setUrgencyId(id)
+              clearErrors('urgency')
+            }}
+            minTileWidth="9.375rem"
+            error={errors.urgency}
+          />
+  
+          <div className="field-narrow">
+            <Field label="What kind of care?" size="question" error={errors.requestType}>
+              {(control) => (
+                <select
+                  {...control}
+                  name="requestType"
+                  value={requestTypeId ?? ''}
+                  onChange={(e) => {
+                    setRequestTypeId(Number(e.target.value))
+                    clearErrors('requestType')
+                  }}
+                  required
+                >
+                  {/* Disabled so it can't be chosen again once a real type is picked */}
+                  <option value="" disabled>Choose a type of care</option>
+                  {choices.requestTypes.map((row) => (
+                    <option key={row.request_type_id} value={row.request_type_id}>
+                      {row.request_type}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Field>
+          </div>
+  
+          <Field
+            label="What's on your heart?"
+            size="question"
+            hint={`Share only what you're comfortable with. Up to ${MEMBER_NOTES_MAX} characters.`}
+            hintPosition="before"
+            error={errors.memberNotes}
+          >
+            {(control) => (
+              <>
+                <textarea
+                  {...control}
+                  name="memberNotes"
+                  rows={4}
+                  maxLength={MEMBER_NOTES_MAX}
+                  value={notes}
+                  onChange={(e) => {
+                    setNotes(e.target.value)
+                    clearErrors('memberNotes')
+                  }}
+                  required
+                />
+                {/* Not a live region: announcing every keystroke would be noisy. */}
+                <p className="char-count" aria-hidden="true">
+                  {notes.length}/{MEMBER_NOTES_MAX}
+                </p>
+              </>
+            )}
+          </Field>
+  
+          {submitError && (
+            <p className="callout" role="alert">
+              We couldn't send your request. Please check your connection and try again.
             </p>
           )}
-        </ChoiceGroup>
 
-        <ChoiceGroup
-          legend="How soon do you need help?"
-          name="urgency"
-          options={urgencyChoices}
-          value={urgency}
-          onChange={setUrgency}
-          minTileWidth="9.375rem"
-        />
-
-        <ChoiceGroup
-          legend="What kind of care?"
-          name="requestType"
-          options={requestTypes}
-          value={requestType}
-          onChange={setRequestType}
-          variant="pill"
-        />
-
-        <Field
-          label="What's on your heart?"
-          size="question"
-          hint={`Share only what you're comfortable with. Up to ${MEMBER_NOTES_MAX} characters.`}
-          hintPosition="before"
-        >
-          {(control) => (
-            <>
-              <textarea
-                {...control}
-                name="memberNotes"
-                rows={4}
-                maxLength={MEMBER_NOTES_MAX}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                required
-              />
-              {/* Not a live region: announcing every keystroke would be noisy. */}
-              <p className="char-count" aria-hidden="true">
-                {notes.length}/{MEMBER_NOTES_MAX}
-              </p>
-            </>
-          )}
-        </Field>
-
-        <div className="form-footer">
-          <Button type="submit" size="lg">Send Request</Button>
-          <p className="muted">Seen only by Zion's pastoral care team.</p>
-        </div>
-      </form>
+          <div className="form-footer">
+            {/* aria-disabled rather than disabled, so the button stays focusable while sending */}
+            <Button type="submit" size="lg" aria-disabled={submitting || undefined}>
+              {submitting ? (
+                <>
+                  <span className="spinner" aria-hidden="true" /> Sending…
+                </>
+              ) : (
+                'Send Request'
+              )}
+            </Button>
+            {/* Always rendered so screen readers are listening before the text changes */}
+            <p className="visually-hidden" role="status">
+              {submitting ? 'Sending your request. Please wait.' : ''}
+            </p>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

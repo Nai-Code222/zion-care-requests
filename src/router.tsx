@@ -26,6 +26,7 @@ export const router = createBrowserRouter([
           { path: 'request/submitted', element: <SubmittedPage /> },
           { path: 'status', element: <StatusLookupPage /> },
           { path: 'staff/login', element: <StaffLoginPage /> },
+          { path: '*', element: <NotFoundPage /> },
         ],
       },
       {
@@ -42,7 +43,6 @@ export const router = createBrowserRouter([
           },
         ],
       },
-      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])

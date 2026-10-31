@@ -5,7 +5,7 @@
  */
 
 .request-page {
-  display: flex;
+  display: grid;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--space-14) 3rem;
@@ -17,19 +17,8 @@
 .request-intro {
   --stack-gap: var(--space-5);
   flex: 1 1 18.75rem;                 /* grows, but wraps above the form below ~300px */
-  max-width: 25rem;
   padding-top: var(--space-5);
-}
-
-.reassurances {
-  gap: 1.125rem;
-  margin-top: var(--space-2);
-}
-.reassurances li {
-  line-height: 1.53;
-}
-.reassurances li > span:last-child {
-  padding-top: 0.4rem;                /* lines the text up with the middle of the badge */
+  text-align: center;
 }
 
 /* ---------- Right column: the form card ---------- */
@@ -47,7 +36,18 @@
   margin-bottom: 0;
 }
 
-/* Name + contact questions nested under "Should we know who you are?" */
+/* Name fields, the "Stay anonymous" tile, then contact questions.
+   The grid gap handles spacing, so drop the children's own top margins. */
+.identity-fields {
+  display: grid;
+  gap: var(--space-5);
+}
+.identity-fields > .field-row,
+.identity-fields > .callout {
+  margin-top: 0;
+}
+
+/* Contact questions, shown whether or not the member is anonymous */
 .named-fields {
   display: grid;
   gap: var(--space-6);
