@@ -1,0 +1,185 @@
+/* src/styles/staff.css
+ *
+ * Care team pages: the request lists (open and archived), the request detail
+ * page and its update form, and the staff login's sign-out link.
+ */
+
+/* StaffLayout's wrapper: its header and main act as direct children of #root's flex column */
+.layout--wide {
+  display: contents;
+}
+
+/* The current page in the staff nav */
+.nav-link[aria-current='page'] {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.staff-page {
+  padding-bottom: 4.5rem;
+}
+.staff-page__intro {
+  --stack-gap: var(--space-2);
+}
+.staff-page .page-title {
+  font-size: var(--text-2xl);
+}
+
+/* Title on one side, sort control on the other, wrapping when narrow */
+.staff-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.staff-sort {
+  flex: 0 1 16rem;
+}
+.staff-sort .field {
+  margin-bottom: 0;
+}
+
+/* Text-only button that reads as a link, e.g. "Sign out" inside a message */
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ======================================================================
+   <RequestList>: a table on wide screens, stacked cards on narrow ones
+   ====================================================================== */
+
+.request-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.request-table th,
+.request-table td {
+  padding: var(--space-4);
+  text-align: start;
+  vertical-align: middle;
+}
+.request-table th {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface-tint);
+}
+.request-table tbody tr + tr {
+  border-top: 1px solid var(--color-divider);
+}
+/* Reference links: tall enough to tap */
+.request-table a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+/* Narrow screens: each row becomes a card, and each cell shows its column name (data-label) */
+@media (max-width: 48rem) {
+  .request-table,
+  .request-table tbody,
+  .request-table tr,
+  .request-table td {
+    display: block;
+  }
+  .request-table {
+    background: none;
+  }
+  /* Hidden visually, still read by screen readers */
+  .request-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .request-table tr {
+    margin-bottom: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+  .request-table tbody tr + tr {
+    border-top: 0;
+  }
+  .request-table td {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+  }
+  .request-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+}
+
+/* ======================================================================
+   Request detail
+   ====================================================================== */
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+.detail-status {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* Details and history on the left, the update form on the right; one column when narrow */
+.detail-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+  align-items: start;
+  gap: var(--space-6);
+}
+
+.detail-notes {
+  --stack-gap: var(--space-2);
+}
+.detail-label {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+p > .detail-label {
+  display: inline;
+}
+/* Internal notes in history: marked so staff never mistake them for member-facing text */
+.detail-internal {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  background: var(--soon-bg);
+}
+
+.detail-form {
+  --stack-gap: var(--space-2);
+}
+.detail-form .field textarea {
+  min-height: 6.5rem;
+}
+.detail-actions {
+  --stack-gap: var(--space-3);
+}
+.detail-hint {
+  font-size: var(--text-sm);
+}
+.detail-saved {
+  margin: 0;
+}
