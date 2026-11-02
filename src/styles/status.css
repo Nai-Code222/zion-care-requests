@@ -1,0 +1,95 @@
+/* src/styles/status.css
+ *
+ * Status lookup page: the code form, then the request's status and updates.
+ */
+
+.status-page {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 38.25rem;
+  margin: 0 auto;
+  padding-bottom: 4.5rem;
+}
+
+.status-intro {
+  --stack-gap: var(--space-4);
+  padding-top: var(--space-5);
+  text-align: center;
+}
+
+.status-form,
+.status-result {
+  --stack-gap: var(--space-6);
+  padding: clamp(1.375rem, 4vw, 2.5rem);
+}
+.status-form .field {
+  margin-bottom: 0;
+}
+/* The message region stays in the page for screen readers; take no space while empty */
+.status-form [role="status"]:empty {
+  display: none;
+}
+.status-form .callout {
+  margin-top: 0;
+}
+
+/* ---------- Status heading and facts ---------- */
+
+.status-summary {
+  --stack-gap: var(--space-3);
+}
+.status-summary__title {
+  font-size: var(--text-xl);
+  line-height: 1.2;
+}
+.status-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-5);
+  border-radius: 14px;
+  background: var(--color-surface-tint);
+}
+.status-facts dt {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.status-facts dd {
+  margin: 0;
+}
+
+/* ---------- Updates, oldest first ---------- */
+
+.status-updates {
+  display: grid;
+  gap: var(--space-5);
+}
+.status-update {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-primary);
+}
+.status-update p {
+  margin: 0;
+}
+.status-update__change {
+  font-weight: 700;
+}
+.status-update__time {
+  font-size: var(--text-sm);
+}
+
+/* ---------- The member's own description ---------- */
+
+.status-notes {
+  --stack-gap: var(--space-2);
+}
+.status-notes__text {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-line;              /* keep the line breaks the member typed */
+  overflow-wrap: anywhere;
+}

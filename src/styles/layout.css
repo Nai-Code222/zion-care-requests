@@ -85,7 +85,7 @@ main {
   font-weight: 700;
 }
 
-/* Wider main column for the staff dashboard (not used yet) */
+/* Wider main column for the staff pages (StaffLayout) */
 .layout--wide main {
   max-width: 90rem;
 }

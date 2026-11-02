@@ -432,7 +432,7 @@
   font-size: 1.0625rem;
 }
 
-/* Urgency badges: always show the word, so color is never the only signal (not used yet) */
+/* <UrgencyBadge>: always shows the word, so color is never the only signal */
 .badge {
   display: inline-block;
   padding: 0 var(--space-2);
@@ -493,7 +493,7 @@
   font-weight: 700;
   color: var(--color-text);
 }
-/* Reference codes in staff views (not used yet) */
+/* Reference codes in staff views */
 .ref-code {
   font-family: var(--font-mono);
   letter-spacing: 0.05em;
