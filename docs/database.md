@@ -4,7 +4,7 @@ This guide explains the Zion Care Requests database: what each table holds, how 
 
 The database is a Supabase project (Postgres 17). Everything the app uses lives in the `public` schema. Helper functions that should never be called from the app live in the `private` schema.
 
-> **Schema snapshot:** matches the migrations in [supabase/migrations/](../supabase/migrations/) as of 2026-10-28. If you add a migration, update this file in the same change.
+> **Schema snapshot:** matches the migrations in [supabase/migrations/](../supabase/migrations/) as of 2026-11-01. If you add a migration, update this file in the same change.
 
 ---
 
@@ -275,7 +275,9 @@ Creates a request and returns its new reference code. This is the only way for a
 | `p_no_contact` | boolean | no | Default `false`. |
 | `p_member_notes` | text | **yes** | The description. Max 250 characters. Blank or only spaces is rejected. |
 
-The status is always set to **Received** (1) and `internal_notes` is always empty, whatever the caller sends. If a value breaks a rule (for example a missing description, a bad email format or a name over 100 characters), the call fails with a Postgres error. Validate in the form too, so members see a clear message instead.
+The status is always set to **Received** (1) and `internal_notes` is always empty, whatever the caller sends.
+
+It also adds the request's first `activity_log` row (Received → Received), in the same transaction. That row's `internal_notes` is `Request Created - MM/DD/YYYY` (Central time). Its `member_message` is the confirmation email, greeting the member by first name when they gave one and aren't anonymous, otherwise "Zion Family Member". Members who chose **No Contact** get the row without the email. If a value breaks a rule (for example a missing description, a bad email format or a name over 100 characters), the call fails with a Postgres error. Validate in the form too, so members see a clear message instead.
 
 `p_member_notes` is listed with a default in the function, because Postgres needs every argument after an optional one to be optional too. But the database rejects the request if it's missing.
 
@@ -317,12 +319,12 @@ Triggers are code the database runs automatically when rows change. They live in
 
 | Trigger | When | What it does |
 | --- | --- | --- |
-| `activity_log_before_insert` | before insert | Sets `changed_by` to the logged-in user. Fills in `old_status_id` from the request's current status. |
+| `activity_log_before_insert` | before insert | Sets `changed_by` to the logged-in user. Fills in `old_status_id` from the request's current status. If the status changes and `member_message` is empty, sets it to `Status changed to <status> - MM/DD/YYYY` (Central time). |
 | `activity_log_after_insert` | after insert | Copies `new_status_id` onto the request, so the request's status follows the log. |
 
 ### Two ways to change a status (both are safe)
 
-**Way A: edit the request.** Update `care_requests.status_type_id`. The database adds a log entry for you, but **with no notes or message**.
+**Way A: edit the request.** Update `care_requests.status_type_id`. The database adds a log entry for you, with no internal note and the default `Status changed to …` message.
 
 **Way B: add a log entry (recommended when there's something to say).** Insert into `activity_log` with `reference_code`, `new_status_id` and any notes or message. The database fills in `old_status_id` and `changed_by`, then updates the request's status.
 
@@ -341,7 +343,7 @@ The app doesn't send email. Instead, each `activity_log` row is the record of th
 
 Internal notes are kept in their own column (`internal_notes`) and are never part of the message. So if real email is added later, it can send `member_message` without any risk of leaking staff notes.
 
-Use Way B whenever the member should be told something. Way A creates a log row with an empty `member_message`.
+Every status change gets a message: the one staff write (Way B), or the default `Status changed to <status> - MM/DD/YYYY`. Use Way B whenever the member should be told something more.
 
 ### How reference codes are made
 
