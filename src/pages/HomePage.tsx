@@ -68,8 +68,6 @@ export default function HomePage() {
           ))}
         </ul>
       </Section>
-
-      
     </div>
   )
 }
