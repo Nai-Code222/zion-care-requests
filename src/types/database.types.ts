@@ -273,6 +273,7 @@ export type Database = {
         Args: { p_reference_code: string }
         Returns: {
           created_at: string
+          member_notes: string
           reference_code: string
           request_type: string
           status_type: string
