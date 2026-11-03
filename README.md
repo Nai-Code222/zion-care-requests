@@ -165,7 +165,7 @@ Sign in at `/staff/login`. All three accounts have the same access.
 | Ruth Alvarez | ruth.staff@example.com | 4sLGc0aMrTDNWJ97 |
 
 ### Reference codes
-Enter any of these at `/status`. Upper or lower case both work. Statuses are as of 2026-11-01 and
+Enter any of these at `/status`. Upper or lower case both work. Statuses are as of 2026-11-02 and
 will change as staff update the requests.
 
 | Reference code | Urgency | Type | Status |
@@ -175,7 +175,7 @@ will change as staff update the requests.
 | ZC-XAUH-Y8WU | Routine | Prayer Support (anonymous) | Received |
 | ZC-EXS7-FQTH | Soon | Counseling Referral | Received |
 | ZC-MRER-6EJH | Soon | Hospital Visit | Received |
-| ZC-CNDK-2QR4 | Urgent | Meal Delivery | Received |
+| ZC-CNDK-2QR4 | Urgent | Meal Delivery | Assigned, with a member note and an internal note |
 | ZC-36K8-EDY9 | Routine | Other | Received |
 | ZC-PS2U-7GFX | Soon | Prayer Support | Received |
 | ZC-JEC7-YEQ6 | Routine | Counseling Referral (anonymous) | Received |
@@ -183,7 +183,7 @@ will change as staff update the requests.
 | ZC-CFF7-S36A | Soon | Hospital Visit (anonymous) | Received |
 | ZC-QKUR-HNQH | Soon | Prayer Support | Received |
 
-**Try the internal-notes rule:** ZC-ASA6-TTN6 has an internal note. Open it on the staff
+**Try the internal-notes rule:** ZC-ASA6-TTN6 and ZC-CNDK-2QR4 have internal notes. Open one on the staff
 dashboard to see the note, then look up the same code at `/status`: the internal note isn't there.
 
 ## What I would finish next
