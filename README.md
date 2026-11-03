@@ -84,7 +84,16 @@ Open the address Vite prints (usually http://localhost:5173).
 I chose this stack primarily to demonstrate hands-on experience with Supabase. React and TypeScript provide a type-safe, component-based frontend, while Vite offers fast local development and production builds.
 
 ## Technical decision and why
-At least one technical decision and why (e.g. RPC for lookup, urgency as ranked)
+
+### Urgency has an explicit rank column
+
+`urgency_type.urgency_rank` holds Routine 1, Soon 2, Urgent 3, and the dashboard's
+**Most urgent first** sort orders requests by it, highest first.
+
+**Why:** sorting by the label is alphabetical, which puts Routine before Urgent. Sorting by ID
+only works by accident of insert order. The rank keeps the order correct even if a level is added
+later. The database also requires every level to have a rank, and no two levels can share one, so
+the order can't be left ambiguous.
 
 
 ## Security & Privacy
