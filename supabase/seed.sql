@@ -104,9 +104,9 @@ insert into public.care_requests (
   ('ZC-MRER-6EJH', 'Harold', 'Jenkins', false, 1, 1, 2, 2, false,
    'In rehab at Riverside Care Center for the next month. Visitors welcome on weekends.',
    null, 'h.jenkins@example.com', '2026-10-28 13:27:22+00', '2026-10-28 13:27:22+00'),
-  ('ZC-CNDK-2QR4', 'Maria', 'Santos', false, 2, 1, 1, 3, false,
+  ('ZC-CNDK-2QR4', 'Maria', 'Santos', false, 2, 3, 1, 3, false,
    'New baby arrived early and we are overwhelmed. Any meals would be a huge help.',
-   '+1 555 412 7783', null, '2026-10-28 13:27:22+00', '2026-10-28 13:27:22+00'),
+   '+1 555 412 7783', null, '2026-10-28 13:27:22+00', '2026-11-02 17:18:01+00'),
   ('ZC-36K8-EDY9', 'Samuel', 'Wright', false, 5, 1, 2, 1, false,
    'Need help getting rides to dialysis on Tuesdays and Thursdays.',
    null, 'sam.wright@example.com', '2026-10-28 13:27:22+00', '2026-10-28 13:27:22+00'),
@@ -127,17 +127,21 @@ insert into public.care_requests (
    '555-640-2281', null, '2026-10-31 12:43:57+00', '2026-10-31 12:43:57+00');
 
 -- ---------------------------------------------------------------------------------------------
--- History: ZC-ASA6-TTN6 was moved to In Review by Marcus, with a note for the member and an
--- internal note. The README uses it to show internal notes staying off the status lookup.
+-- History: Marcus moved ZC-ASA6-TTN6 to In Review and ZC-CNDK-2QR4 to Assigned, each with a note
+-- for the member and an internal note. The README uses them to show internal notes staying off
+-- the status lookup. Each request's status and updated_at above match its latest row here.
 -- ---------------------------------------------------------------------------------------------
 
 insert into public.activity_log (reference_code, old_status_id, new_status_id, timestamp, internal_notes, member_message, changed_by)
-values (
-  'ZC-ASA6-TTN6', 1, 2, '2026-11-02 04:14:39+00',
-  'Assigned to the Thursday meal team. Prefers drop-off after 2pm.',
-  'Our meal team is reviewing your request and will reach out this week.',
-  'dd498afb-f412-4f26-ad4b-64de08fa953e'
-);
+values
+  ('ZC-ASA6-TTN6', 1, 2, '2026-11-02 04:14:39+00',
+   'Assigned to the Thursday meal team. Prefers drop-off after 2pm.',
+   'Our meal team is reviewing your request and will reach out this week.',
+   'dd498afb-f412-4f26-ad4b-64de08fa953e'),
+  ('ZC-CNDK-2QR4', 1, 3, '2026-11-02 17:18:01+00',
+   'Meal train set up with the Greenbelt hospitality team, dinners Mon/Wed/Fri for two weeks.',
+   'A volunteer from our meal team will call you to arrange the first delivery.',
+   'dd498afb-f412-4f26-ad4b-64de08fa953e');
 
 set session_replication_role = default;
 
